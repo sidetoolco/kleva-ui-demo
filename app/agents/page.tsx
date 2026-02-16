@@ -267,19 +267,19 @@ export default function AgentsPage() {
 
       {/* Test Agent Modal */}
       {showTestModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <div className="mb-4">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Test AI Agent</h2>
-              <p className="text-sm text-gray-600">Make a test call to preview agent behavior</p>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-2xl animate-slide-in">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Test AI Agent</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Make a test call to preview agent behavior</p>
             </div>
 
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Select Agent
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <select className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all">
                   {agents.map((agent) => (
                     <option key={agent.id} value={agent.id}>
                       {agent.name}
@@ -289,21 +289,21 @@ export default function AgentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Test Phone Number
                 </label>
                 <input
                   type="tel"
                   placeholder="+52 55 1234 5678"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Test Scenario
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <select className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all">
                   <option>Credit Card Payment Reminder</option>
                   <option>Personal Loan Follow-up</option>
                   <option>Auto Loan Collection</option>
@@ -311,16 +311,22 @@ export default function AgentsPage() {
                   <option>Custom Scenario</option>
                 </select>
               </div>
+
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-xs text-blue-700 dark:text-blue-400">
+                  💡 Tip: Test calls are free and won't affect your production metrics
+                </p>
+              </div>
             </div>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setShowTestModal(false)}
-                className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all"
               >
                 Cancel
               </button>
-              <button className="flex-1 px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 flex items-center justify-center gap-2">
+              <button className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 flex items-center justify-center gap-2 transition-all hover:scale-105">
                 <Play className="w-4 h-4" />
                 Start Test Call
               </button>

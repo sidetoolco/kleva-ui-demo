@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Search, MoreHorizontal, Plus, Users, Trash2, Send } from "lucide-react";
 import Link from "next/link";
+import { FloatingActionButton } from "@/components/FloatingActionButton";
+import { useToast } from "@/components/Toast";
 
 type Tab = "all" | "active" | "promises" | "inactive";
 
@@ -145,6 +147,7 @@ const contacts: Contact[] = [
 export default function AudiencePage() {
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const { showToast } = useToast();
 
   const filteredContacts = contacts.filter((contact) => {
     if (activeTab === "all") return true;
@@ -372,6 +375,13 @@ export default function AudiencePage() {
           </tbody>
         </table>
       </div>
+
+      {/* Floating Action Button */}
+      <FloatingActionButton
+        onClick={() => showToast("info", "Add contact form would open here")}
+        icon={<Plus className="w-6 h-6" />}
+        label="Add Contact"
+      />
     </div>
   );
 }
