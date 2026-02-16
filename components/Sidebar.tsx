@@ -6,18 +6,18 @@ import {
   Phone, 
   MessageSquare,
   Users,
+  Mic,
   Megaphone,
-  LayoutDashboard,
-  PlayCircle 
+  LayoutDashboard
 } from "lucide-react";
 
 const navigation = [
   { name: "Calls", href: "/", icon: Phone },
   { name: "Messages", href: "/messages", icon: MessageSquare },
   { name: "Audience", href: "/audience", icon: Users },
+  { name: "Agents", href: "/agents", icon: Mic },
   { name: "Campaigns", href: "/campaigns", icon: Megaphone },
   { name: "Metrics", href: "/metrics", icon: LayoutDashboard },
-  { name: "Playground", href: "/playground", icon: PlayCircle },
 ];
 
 export default function Sidebar() {
