@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { 
   Phone, 
   MessageSquare,
+  Users,
   Megaphone,
-  Users, 
   LayoutDashboard,
   PlayCircle 
 } from "lucide-react";
@@ -14,8 +14,8 @@ import {
 const navigation = [
   { name: "Calls", href: "/", icon: Phone },
   { name: "Messages", href: "/messages", icon: MessageSquare },
+  { name: "Audience", href: "/audience", icon: Users },
   { name: "Campaigns", href: "/campaigns", icon: Megaphone },
-  { name: "Agents", href: "/agents", icon: Users },
   { name: "Metrics", href: "/metrics", icon: LayoutDashboard },
   { name: "Playground", href: "/playground", icon: PlayCircle },
 ];
@@ -54,7 +54,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
         {navigation.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           const Icon = item.icon;
           
           return (
