@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   Phone, 
+  MessageSquare,
   Megaphone,
   Users, 
   LayoutDashboard,
@@ -12,6 +13,7 @@ import {
 
 const navigation = [
   { name: "Calls", href: "/", icon: Phone },
+  { name: "Messages", href: "/messages", icon: MessageSquare },
   { name: "Campaigns", href: "/campaigns", icon: Megaphone },
   { name: "Agents", href: "/agents", icon: Users },
   { name: "Metrics", href: "/metrics", icon: LayoutDashboard },
