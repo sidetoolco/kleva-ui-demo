@@ -7,7 +7,24 @@ import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 
 export const metadata: Metadata = {
   title: "Kleva - AI Collections Platform",
-  description: "AI-powered collections infrastructure for Latin America",
+  description: "AI-powered collections infrastructure for Latin America. Automate debt recovery with AI voice agents, WhatsApp, SMS, and email.",
+  metadataBase: new URL("https://kleva-ui-demo.vercel.app"),
+  openGraph: {
+    title: "Kleva - AI Collections Platform",
+    description: "Automate debt recovery with AI voice agents for Latin America",
+    type: "website",
+    siteName: "Kleva",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kleva - AI Collections Platform",
+    description: "Automate debt recovery with AI voice agents for Latin America",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({

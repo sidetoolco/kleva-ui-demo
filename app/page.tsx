@@ -2,10 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { Search, Download, Code2, MoreHorizontal, Headphones, ArrowUpDown } from "lucide-react";
+import { AudioPlayer } from "@/components/AudioPlayer";
 import { Pagination } from "@/components/Pagination";
 import { Tooltip } from "@/components/Tooltip";
 import { useToast } from "@/components/Toast";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
+import { ActivityFeed } from "@/components/ActivityFeed";
 
 type Tab = "all" | "answered" | "promises" | "no-answer";
 type SortField = "to" | "status" | "sent";
@@ -322,6 +324,9 @@ export default function CallsPage() {
               <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                 Subject
               </th>
+              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                Recording
+              </th>
               <th 
                 onClick={() => handleSort("sent")}
                 className="text-right px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -337,7 +342,7 @@ export default function CallsPage() {
           <tbody>
             {paginatedCalls.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-16 text-center">
+                <td colSpan={6} className="px-6 py-16 text-center">
                   <div className="flex flex-col items-center gap-3">
                     <Headphones className="w-12 h-12 text-gray-300 dark:text-gray-600" />
                     <p className="text-gray-500 dark:text-gray-400 font-medium">No calls found</p>
@@ -381,6 +386,13 @@ export default function CallsPage() {
                   <td className="px-6 py-4">
                     <span className="text-sm text-gray-900 dark:text-gray-300">{call.subject}</span>
                   </td>
+                  <td className="px-6 py-4">
+                    {call.hasRecording ? (
+                      <AudioPlayer duration={call.status === "promise" ? "1:45" : call.status === "answered" ? "1:22" : "0:32"} />
+                    ) : (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <span className="text-sm text-gray-500 dark:text-gray-400">{call.sent}</span>
                   </td>
@@ -404,6 +416,11 @@ export default function CallsPage() {
             totalItems={filteredAndSortedCalls.length}
           />
         )}
+      </div>
+
+      {/* Live Activity Feed */}
+      <div className="mt-6">
+        <ActivityFeed />
       </div>
     </div>
   );
