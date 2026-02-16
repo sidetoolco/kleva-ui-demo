@@ -3,6 +3,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { ToastProvider } from "@/components/Toast";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 
 export const metadata: Metadata = {
   title: "Kleva - AI Collections Platform",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className="antialiased">
         <ThemeProvider>
           <ToastProvider>
+            <KeyboardShortcuts />
             <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
               <Sidebar />
               <main className="flex-1 overflow-y-auto">
