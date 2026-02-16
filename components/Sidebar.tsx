@@ -18,14 +18,14 @@ import { useTheme } from "./ThemeProvider";
 import { Tooltip } from "./Tooltip";
 
 const navigation = [
-  { name: "Calls", href: "/", icon: Phone },
-  { name: "Messages", href: "/messages", icon: MessageSquare },
-  { name: "Emails", href: "/emails", icon: Mail },
-  { name: "Audience", href: "/audience", icon: Users },
-  { name: "Agents", href: "/agents", icon: Mic },
-  { name: "Campaigns", href: "/campaigns", icon: Megaphone },
-  { name: "Metrics", href: "/metrics", icon: LayoutDashboard },
-  { name: "Settings", href: "/settings", icon: SettingsIcon },
+  { name: "Calls", href: "/", icon: Phone, badge: null },
+  { name: "Messages", href: "/messages", icon: MessageSquare, badge: "3" },
+  { name: "Emails", href: "/emails", icon: Mail, badge: null },
+  { name: "Audience", href: "/audience", icon: Users, badge: null },
+  { name: "Agents", href: "/agents", icon: Mic, badge: null },
+  { name: "Campaigns", href: "/campaigns", icon: Megaphone, badge: "2" },
+  { name: "Metrics", href: "/metrics", icon: LayoutDashboard, badge: null },
+  { name: "Settings", href: "/settings", icon: SettingsIcon, badge: null },
 ];
 
 export default function Sidebar() {
@@ -92,6 +92,11 @@ export default function Sidebar() {
             >
               <Icon className="w-5 h-5" />
               {item.name}
+              {item.badge && (
+                <span className="ml-auto text-[10px] font-bold bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}

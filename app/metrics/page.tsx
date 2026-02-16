@@ -8,8 +8,8 @@ export default function MetricsPage() {
   return (
     <div className="p-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Metrics</h1>
-        <p className="text-gray-600">Performance analytics and insights</p>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Metrics</h1>
+        <p className="text-gray-600 dark:text-gray-400">Performance analytics and insights</p>
       </div>
 
       {/* Key Metrics Grid */}
