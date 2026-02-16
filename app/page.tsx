@@ -1,125 +1,250 @@
-import StatsCard from "@/components/StatsCard";
-import RecentActivity from "@/components/RecentActivity";
-import { Filter, Download, Calendar } from "lucide-react";
+"use client";
 
-export default function Dashboard() {
+import { useState } from "react";
+import { Search, Download, Code2, MoreHorizontal, Headphones } from "lucide-react";
+
+type Tab = "all" | "answered" | "promises" | "no-answer";
+
+interface Call {
+  to: string;
+  status: "promise" | "answered" | "no-answer" | "voicemail";
+  statusLabel: string;
+  subject: string;
+  sent: string;
+  hasRecording: boolean;
+}
+
+const calls: Call[] = [
+  {
+    to: "Juan Martinez",
+    status: "promise",
+    statusLabel: "Promise",
+    subject: "VISA-1234 • Payment commitment $1,250",
+    sent: "about 2 hours ago",
+    hasRecording: true
+  },
+  {
+    to: "Maria Gonzalez",
+    status: "answered",
+    statusLabel: "Answered",
+    subject: "LOAN-5678 • Follow-up scheduled",
+    sent: "about 2 hours ago",
+    hasRecording: true
+  },
+  {
+    to: "Pedro Silva",
+    status: "promise",
+    statusLabel: "Promise",
+    subject: "AUTO-9012 • Payment plan $890",
+    sent: "about 3 hours ago",
+    hasRecording: true
+  },
+  {
+    to: "Carmen Lopez",
+    status: "answered",
+    statusLabel: "Answered",
+    subject: "VISA-3456 • Callback requested",
+    sent: "about 3 hours ago",
+    hasRecording: true
+  },
+  {
+    to: "Roberto Diaz",
+    status: "no-answer",
+    statusLabel: "No Answer",
+    subject: "LOAN-7890 • Voicemail left",
+    sent: "about 4 hours ago",
+    hasRecording: false
+  },
+  {
+    to: "Ana Torres",
+    status: "answered",
+    statusLabel: "Answered",
+    subject: "AUTO-2345 • Will pay tomorrow",
+    sent: "about 5 hours ago",
+    hasRecording: true
+  },
+  {
+    to: "Carlos Ramirez",
+    status: "promise",
+    statusLabel: "Promise",
+    subject: "VISA-6789 • Payment commitment $2,100",
+    sent: "1 day ago",
+    hasRecording: true
+  },
+  {
+    to: "Sofia Mendez",
+    status: "voicemail",
+    statusLabel: "Voicemail",
+    subject: "LOAN-3456 • No contact",
+    sent: "1 day ago",
+    hasRecording: false
+  },
+  {
+    to: "Miguel Angel",
+    status: "answered",
+    statusLabel: "Answered",
+    subject: "AUTO-7890 • Hardship request",
+    sent: "2 days ago",
+    hasRecording: true
+  },
+  {
+    to: "Patricia Ruiz",
+    status: "promise",
+    statusLabel: "Promise",
+    subject: "VISA-4567 • Payment commitment $750",
+    sent: "2 days ago",
+    hasRecording: true
+  }
+];
+
+export default function CallsPage() {
+  const [activeTab, setActiveTab] = useState<Tab>("all");
+
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-7xl">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <p className="text-sm text-gray-500 mb-1">Dashboard</p>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Calendar className="w-4 h-4" />
-            Last 7 days
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Filter className="w-4 h-4" />
-            Filters
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Download className="w-4 h-4" />
-            Export
-          </button>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Calls</h1>
       </div>
 
-      {/* Minutes Balance */}
-      <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <div className="w-4 h-4 border-2 border-gray-400 rounded-full" />
-            Minutes balance
-          </div>
-          <div className="text-sm text-gray-600">
-            <span className="text-purple-600 font-medium">25,383.29</span> / 40,000
-          </div>
-        </div>
-        <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div 
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
-            style={{ width: '63.5%' }}
+      {/* Tabs */}
+      <div className="flex items-center gap-6 mb-6">
+        <button
+          onClick={() => setActiveTab("all")}
+          className={`text-sm font-medium pb-2 transition-colors ${
+            activeTab === "all"
+              ? "text-gray-900 border-b-2 border-gray-900"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => setActiveTab("answered")}
+          className={`text-sm font-medium pb-2 transition-colors ${
+            activeTab === "answered"
+              ? "text-gray-900 border-b-2 border-gray-900"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          Answered
+        </button>
+        <button
+          onClick={() => setActiveTab("promises")}
+          className={`text-sm font-medium pb-2 transition-colors ${
+            activeTab === "promises"
+              ? "text-gray-900 border-b-2 border-gray-900"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          Promises
+        </button>
+        <button
+          onClick={() => setActiveTab("no-answer")}
+          className={`text-sm font-medium pb-2 transition-colors ${
+            activeTab === "no-answer"
+              ? "text-gray-900 border-b-2 border-gray-900"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          No Answer
+        </button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
           />
         </div>
-        <div className="mt-2 text-sm text-gray-500">
-          14,616.71 minutes remaining
-          <span className="ml-2 text-purple-600 font-medium">36.5% remaining</span>
-        </div>
+        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+          Last 15 days
+        </button>
+        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+          All Statuses
+        </button>
+        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+          All Campaigns
+        </button>
+        <button className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <Code2 className="w-4 h-4" />
+        </button>
+        <button className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+          <MoreHorizontal className="w-4 h-4" />
+        </button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <StatsCard
-          title="Promised Payment"
-          value="156"
-          description="$187,450 committed"
-          change="+12% vs last week"
-          trend="up"
-          highlight
-        />
-        <StatsCard
-          title="Total Calls"
-          value="2,847"
-          description="All calls made"
-          change="+8% vs All time"
-          trend="up"
-        />
-        <StatsCard
-          title="Answered Calls"
-          value="1,923"
-          description="Calls answered"
-          change="+5% vs All time"
-          trend="up"
-        />
-        <StatsCard
-          title="Total Minutes"
-          value="4,168.45"
-          description="Consumed minutes"
-          change="+10% vs All time"
-          trend="up"
-        />
-        <StatsCard
-          title="Total Cost"
-          value="$12,450"
-          description="Total spending"
-          change="+6% vs All time"
-          trend="up"
-        />
-        <StatsCard
-          title="Avg Call Cost"
-          value="$4.37"
-          description="Average per call"
-          change="+2% vs All time"
-          trend="up"
-        />
-        <StatsCard
-          title="Avg Promise Cost"
-          value="$79.81"
-          description="Average per promise"
-          change="-3% vs All time"
-          trend="down"
-        />
-        <StatsCard
-          title="Avg Campaign Cost"
-          value="$1,556.25"
-          description="Average per campaign"
-          change="+4% vs All time"
-          trend="up"
-        />
-        <StatsCard
-          title="Avg Call Mins"
-          value="01:28"
-          description="Average call duration"
-          change="0% vs All time"
-          trend="neutral"
-        />
+      {/* Table */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
+                To
+              </th>
+              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
+                Status
+              </th>
+              <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
+                Subject
+              </th>
+              <th className="text-right px-6 py-3 text-sm font-medium text-gray-500">
+                Sent
+              </th>
+              <th className="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {calls.map((call, index) => (
+              <tr
+                key={index}
+                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              >
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <Headphones className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">
+                      {call.to}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-medium rounded ${
+                      call.status === "promise"
+                        ? "bg-green-50 text-green-700"
+                        : call.status === "answered"
+                        ? "bg-blue-50 text-blue-700"
+                        : call.status === "voicemail"
+                        ? "bg-purple-50 text-purple-700"
+                        : "bg-gray-50 text-gray-600"
+                    }`}
+                  >
+                    {call.statusLabel}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-900">{call.subject}</span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <span className="text-sm text-gray-500">{call.sent}</span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <button className="text-gray-400 hover:text-gray-600">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-
-      {/* Recent Activity Table */}
-      <RecentActivity />
     </div>
   );
 }

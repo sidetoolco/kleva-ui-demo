@@ -3,18 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
-  LayoutDashboard, 
   Phone, 
-  Users, 
   Megaphone,
+  Users, 
+  LayoutDashboard,
   PlayCircle 
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Calls", href: "/calls", icon: Phone },
-  { name: "Agents", href: "/agents", icon: Users },
+  { name: "Calls", href: "/", icon: Phone },
   { name: "Campaigns", href: "/campaigns", icon: Megaphone },
+  { name: "Agents", href: "/agents", icon: Users },
+  { name: "Metrics", href: "/metrics", icon: LayoutDashboard },
   { name: "Playground", href: "/playground", icon: PlayCircle },
 ];
 
@@ -24,14 +24,20 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold">kleva</h1>
+      <div className="p-6 border-b border-gray-200 flex items-center gap-3">
+        <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white text-sm font-bold">
+          K
+        </div>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold text-gray-900">kleva</h1>
+          <span className="text-xs text-gray-500">Pro</span>
+        </div>
       </div>
 
       {/* User Profile */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm font-medium">
+          <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white text-xs font-medium">
             VU
           </div>
           <div className="flex-1 min-w-0">
@@ -65,6 +71,16 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* User email at bottom */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 text-xs font-medium">
+            E
+          </div>
+          <span className="text-xs text-gray-600">ed@kleva.co</span>
+        </div>
+      </div>
     </div>
   );
 }
