@@ -1,26 +1,63 @@
 # Kleva UI Demo
 
-Modern, Resend-inspired UI demo for Kleva's AI collections platform.
+Production-ready demo of Kleva's AI collections platform with Resend-inspired design.
 
-## Features
+## ✨ Features
 
-- 🎨 Clean, minimal design inspired by Resend
-- 📊 Dashboard with stats cards and activity table
-- 📞 Calls page with detailed history
-- 🎯 Campaigns page with status management
-- 📱 Fully responsive design
-- 🎭 Tab navigation on each page
-- 🔍 Search and filter functionality
-- 📈 Status badges and visual indicators
+### 📞 Communication Channels
+- **Calls** - AI voice call history with status tracking
+- **Messages** - WhatsApp and SMS communications
+- **Emails** - Email campaign tracking with open/click rates
 
-## Tech Stack
+### 👥 Contact Management
+- **Audience** - Complete contact database
+- **Contact Details** - Individual profiles with activity timeline
+- **Bulk Actions** - Select multiple contacts for batch operations
+- **Export** - CSV export functionality
+
+### 🎙️ Agent Management
+- **Agent List** - All AI voice agents with performance metrics
+- **Test Agent** - Live testing interface for agents
+- **Performance Tracking** - Promise rates, call duration, campaigns
+
+### 📊 Analytics
+- **Metrics Dashboard** - KPIs, charts, and performance trends
+- **Promise Rate Trends** - Weekly performance visualization
+- **Call Volume Charts** - Daily call patterns
+- **Top Performers** - Best agents and campaigns
+
+### 🎯 Campaign Management
+- **Campaign List** - All active, paused, and completed campaigns
+- **Campaign Details** - Deep dive into each campaign with stats
+- **Activity Timeline** - Recent promises, payments, and calls
+- **Clickable Rows** - Navigate to campaign details
+
+### ⚙️ Settings
+- **Account** - Profile and company information
+- **API Keys** - Manage production and development keys
+- **Webhooks** - Configure webhook endpoints
+- **Team** - Invite and manage team members
+- **Billing** - Usage tracking and plan management
+- **Notifications** - Email notification preferences
+
+## 🎨 Design System
+
+Built with Resend-inspired principles:
+- ✅ Clean, minimal interface
+- ✅ Subtle borders and spacing
+- ✅ Soft status badges with pastel colors
+- ✅ Smooth transitions and hover states
+- ✅ Empty states with helpful messaging
+- ✅ Responsive design for all screen sizes
+
+## 🛠️ Tech Stack
 
 - **Next.js 15** - React framework with App Router
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Utility-first styling
-- **Lucide React** - Beautiful icons
+- **Lucide React** - Icon library
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Local Development
 
@@ -36,124 +73,97 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Deploy to Vercel
 
-#### Option 1: Vercel CLI (Fastest)
+The fastest way to deploy:
 
 ```bash
-# Install Vercel CLI
 npm i -g vercel
-
-# Deploy
-cd kleva-ui-demo
-vercel
+vercel --prod
 ```
 
-Follow the prompts:
-- Set up and deploy? **Y**
-- Which scope? Select your account
-- Link to existing project? **N**
-- What's your project's name? **kleva-ui-demo**
-- In which directory is your code located? **./**
-- Want to modify settings? **N**
+Or connect your GitHub repo to Vercel dashboard.
 
-Your demo will be live at `https://kleva-ui-demo-xxxxx.vercel.app`
+## 📄 Pages
 
-#### Option 2: GitHub + Vercel Dashboard
+### Communication
+- `/` - Calls (home page)
+- `/messages` - WhatsApp & SMS
+- `/emails` - Email campaigns
 
-1. **Push to GitHub:**
-```bash
-cd kleva-ui-demo
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/kleva-ui-demo.git
-git push -u origin main
+### Management
+- `/audience` - Contact list
+- `/audience/[id]` - Contact details
+- `/agents` - AI agent management
+- `/campaigns` - Campaign list
+- `/campaigns/[id]` - Campaign details
+
+### Analytics & Settings
+- `/metrics` - Performance dashboard
+- `/settings` - Account settings
+
+## 🎯 Key Features
+
+### Working Search
+Real-time filtering across all tables
+
+### Export Functionality
+Download data as CSV from any table
+
+### Bulk Actions
+Select multiple contacts for batch operations
+
+### Status Tracking
+Color-coded badges for all statuses:
+- 🟢 Green - Success (Promise, Clicked, Read)
+- 🔵 Blue - Info (Answered, Delivered, Opened)
+- 🟡 Yellow - Warning (Callback, No Contact)
+- 🔴 Red - Error (Bounced, Failed)
+- ⚪ Gray - Neutral (Sent, Pending)
+
+### Responsive Tables
+- Hover effects
+- Empty states
+- Loading states
+- Smooth animations
+
+## 📊 Sample Data
+
+The demo includes realistic mock data:
+- 10 calls with various outcomes
+- 10 messages (WhatsApp + SMS)
+- 10 emails with tracking data
+- 10 contacts with interaction history
+- 5 AI agents with performance metrics
+- 5 campaigns with stats
+
+## 🎨 Color Palette
+
+```css
+--gray-900: #111827;  /* Primary text */
+--gray-500: #6b7280;  /* Secondary text */
+--gray-200: #e5e7eb;  /* Borders */
+
+--green-500: #10b981;  /* Success */
+--blue-500: #3b82f6;   /* Info */
+--yellow-500: #f59e0b; /* Warning */
+--red-500: #ef4444;    /* Error */
+--purple-500: #a855f7; /* Accent */
 ```
 
-2. **Deploy on Vercel:**
-- Go to [vercel.com](https://vercel.com)
-- Click "New Project"
-- Import your GitHub repo
-- Click "Deploy"
+## 🚧 Roadmap
 
-Done! Your demo is live.
+Future enhancements:
+- [ ] Real-time updates via WebSocket
+- [ ] Advanced filters with saved views
+- [ ] Custom dashboards
+- [ ] White-label customization
+- [ ] Multi-language support
+- [ ] Dark mode
 
-## Pages
-
-### Dashboard (`/`)
-- Minutes balance indicator
-- 9 key metric cards
-- Recent activity table with live campaigns
-- Time range selector and filters
-
-### Campaigns (`/campaigns`)
-- Tab navigation (Active, Scheduled, Paused, Completed)
-- Campaign stats overview
-- Searchable campaign table
-- Status badges and country flags
-- Bulk actions and export
-
-### Calls (`/calls`)
-- Tab navigation (All Calls, Answered, Voicemail, No Answer, Disputes)
-- Call history with outcomes
-- Debtor avatars with initials
-- Recording playback indicators
-- Duration and agent tracking
-
-### Agents (`/agents`)
-- Coming soon placeholder
-
-### Playground (`/playground`)
-- Coming soon placeholder
-
-## Design Patterns from Resend
-
-✅ Clean sidebar navigation with user profile
-✅ Tab-based page organization
-✅ Searchable data tables
-✅ Status badge system (green/yellow/red/gray)
-✅ Action buttons (Filters, Export, Create)
-✅ Avatar initials for privacy
-✅ Subtle borders and spacing
-✅ Hover states on interactive elements
-
-## Customization
-
-### Colors
-
-Update colors in `tailwind.config.ts`:
-
-```typescript
-theme: {
-  extend: {
-    colors: {
-      primary: '#a855f7',  // Purple
-      success: '#10b981',  // Green
-      warning: '#f59e0b',  // Yellow
-      danger: '#ef4444',   // Red
-    }
-  }
-}
-```
-
-### Mock Data
-
-Edit mock data in:
-- `app/page.tsx` - Dashboard stats
-- `components/RecentActivity.tsx` - Campaign data
-- `app/campaigns/page.tsx` - Campaign list
-- `app/calls/page.tsx` - Call history
-
-## Next Steps
-
-To connect to real data:
-
-1. Add API routes in `app/api/`
-2. Integrate with Kleva backend
-3. Add authentication (Clerk, NextAuth)
-4. Implement real-time updates
-5. Add loading and error states
-
-## License
+## 📝 License
 
 MIT
+
+---
+
+**Live Demo:** https://kleva-ui-demo.vercel.app  
+**GitHub:** https://github.com/sidetoolco/kleva-ui-demo

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, Download, Code2, MoreHorizontal, Headphones } from "lucide-react";
 
 type Tab = "all" | "answered" | "promises" | "no-answer";
@@ -99,6 +99,48 @@ const calls: Call[] = [
 
 export default function CallsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCalls = useMemo(() => {
+    let filtered = calls;
+    
+    // Filter by tab
+    if (activeTab === "answered") filtered = filtered.filter(c => c.status === "answered");
+    if (activeTab === "promises") filtered = filtered.filter(c => c.status === "promise");
+    if (activeTab === "no-answer") filtered = filtered.filter(c => c.status === "no-answer" || c.status === "voicemail");
+    
+    // Filter by search
+    if (searchQuery) {
+      filtered = filtered.filter(c =>
+        c.to.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.subject.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    return filtered;
+  }, [activeTab, searchQuery]);
+
+  const exportToCSV = () => {
+    const headers = ["To", "Status", "Subject", "Sent"];
+    const rows = filteredCalls.map(call => [
+      call.to,
+      call.statusLabel,
+      call.subject,
+      call.sent
+    ]);
+    
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kleva-calls-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  };
 
   return (
     <div className="p-8 max-w-7xl">
@@ -158,31 +200,37 @@ export default function CallsPage() {
           <input
             type="text"
             placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
           />
         </div>
-        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
           Last 15 days
         </button>
-        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
           All Statuses
         </button>
-        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
           All Campaigns
         </button>
-        <button className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <button className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
           <Code2 className="w-4 h-4" />
         </button>
-        <button className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">
-          <MoreHorizontal className="w-4 h-4" />
+        <button 
+          onClick={exportToCSV}
+          className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          title="Export to CSV"
+        >
+          <Download className="w-4 h-4" />
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200">
+            <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
                 To
               </th>
@@ -199,52 +247,73 @@ export default function CallsPage() {
             </tr>
           </thead>
           <tbody>
-            {calls.map((call, index) => (
-              <tr
-                key={index}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-              >
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <Headphones className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">
-                      {call.to}
-                    </span>
+            {filteredCalls.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-16 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <Headphones className="w-12 h-12 text-gray-300" />
+                    <p className="text-gray-500 font-medium">No calls found</p>
+                    <p className="text-sm text-gray-400">
+                      {searchQuery ? "Try adjusting your search" : "Calls will appear here once they're made"}
+                    </p>
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-medium rounded ${
-                      call.status === "promise"
-                        ? "bg-green-50 text-green-700"
-                        : call.status === "answered"
-                        ? "bg-blue-50 text-blue-700"
-                        : call.status === "voicemail"
-                        ? "bg-purple-50 text-purple-700"
-                        : "bg-gray-50 text-gray-600"
-                    }`}
-                  >
-                    {call.statusLabel}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">{call.subject}</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="text-sm text-gray-500">{call.sent}</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </button>
-                </td>
               </tr>
-            ))}
+            ) : (
+              filteredCalls.map((call, index) => (
+                <tr
+                  key={index}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <Headphones className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">
+                        {call.to}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded transition-colors ${
+                        call.status === "promise"
+                          ? "bg-green-50 text-green-700"
+                          : call.status === "answered"
+                          ? "bg-blue-50 text-blue-700"
+                          : call.status === "voicemail"
+                          ? "bg-purple-50 text-purple-700"
+                          : "bg-gray-50 text-gray-600"
+                      }`}
+                    >
+                      {call.statusLabel}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-sm text-gray-900">{call.subject}</span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className="text-sm text-gray-500">{call.sent}</span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
+
+      {/* Results count */}
+      {filteredCalls.length > 0 && (
+        <div className="mt-4 text-sm text-gray-500">
+          Showing {filteredCalls.length} of {calls.length} calls
+        </div>
+      )}
     </div>
   );
 }
