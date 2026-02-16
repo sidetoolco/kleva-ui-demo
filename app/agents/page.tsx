@@ -314,7 +314,7 @@ export default function AgentsPage() {
 
               <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <p className="text-xs text-blue-700 dark:text-blue-400">
-                  💡 Tip: Test calls are free and won't affect your production metrics
+                  💡 Tip: Test calls are free and won&apos;t affect your production metrics
                 </p>
               </div>
             </div>
