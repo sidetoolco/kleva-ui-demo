@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MoreHorizontal, Plus, Users } from "lucide-react";
+import { Search, MoreHorizontal, Plus, Users, Trash2, Send } from "lucide-react";
 import Link from "next/link";
 
 type Tab = "all" | "active" | "promises" | "inactive";
@@ -144,6 +144,7 @@ const contacts: Contact[] = [
 
 export default function AudiencePage() {
   const [activeTab, setActiveTab] = useState<Tab>("all");
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
 
   const filteredContacts = contacts.filter((contact) => {
     if (activeTab === "all") return true;
@@ -152,6 +153,18 @@ export default function AudiencePage() {
     if (activeTab === "inactive") return contact.status === "inactive";
     return true;
   });
+
+  const toggleContact = (id: string) => {
+    setSelectedContacts(prev =>
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAll = () => {
+    setSelectedContacts(prev =>
+      prev.length === filteredContacts.length ? [] : filteredContacts.map(c => c.id)
+    );
+  };
 
   return (
     <div className="p-8 max-w-7xl">
@@ -204,6 +217,31 @@ export default function AudiencePage() {
         </button>
       </div>
 
+      {/* Bulk Actions Bar */}
+      {selectedContacts.length > 0 && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+          <span className="text-sm font-medium text-blue-900">
+            {selectedContacts.length} contact{selectedContacts.length > 1 ? 's' : ''} selected
+          </span>
+          <div className="flex items-center gap-2">
+            <button className="px-3 py-1.5 text-sm font-medium text-blue-700 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 flex items-center gap-2">
+              <Send className="w-4 h-4" />
+              Add to Campaign
+            </button>
+            <button className="px-3 py-1.5 text-sm font-medium text-red-700 bg-white border border-red-200 rounded-lg hover:bg-red-50 flex items-center gap-2">
+              <Trash2 className="w-4 h-4" />
+              Remove
+            </button>
+            <button 
+              onClick={() => setSelectedContacts([])}
+              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Search Bar */}
       <div className="mb-6 flex items-center gap-3">
         <div className="flex-1 relative">
@@ -228,6 +266,14 @@ export default function AudiencePage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200">
+              <th className="w-12 px-6 py-3">
+                <input
+                  type="checkbox"
+                  checked={selectedContacts.length === filteredContacts.length && filteredContacts.length > 0}
+                  onChange={toggleAll}
+                  className="rounded border-gray-300"
+                />
+              </th>
               <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
                 Contact
               </th>
@@ -256,9 +302,17 @@ export default function AudiencePage() {
             {filteredContacts.map((contact) => (
               <tr
                 key={contact.id}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
               >
-                <td className="px-6 py-4">
+                <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selectedContacts.includes(contact.id)}
+                    onChange={() => toggleContact(contact.id)}
+                    className="rounded border-gray-300"
+                  />
+                </td>
+                <td className="px-6 py-4 cursor-pointer">
                   <Link href={`/audience/${contact.id}`} className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                       <span className="text-sm font-medium text-purple-600">

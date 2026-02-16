@@ -170,10 +170,11 @@ export default function CampaignsPage() {
             {filteredCampaigns.map((campaign, index) => (
               <tr
                 key={index}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                onClick={() => window.location.href = `/campaigns/${index + 1}`}
               >
                 <td className="px-6 py-4">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 hover:text-gray-700">
                     {campaign.name}
                   </span>
                 </td>

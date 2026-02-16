@@ -9,7 +9,8 @@ import {
   Users,
   Mic,
   Megaphone,
-  LayoutDashboard
+  LayoutDashboard,
+  Settings as SettingsIcon
 } from "lucide-react";
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Agents", href: "/agents", icon: Mic },
   { name: "Campaigns", href: "/campaigns", icon: Megaphone },
   { name: "Metrics", href: "/metrics", icon: LayoutDashboard },
+  { name: "Settings", href: "/settings", icon: SettingsIcon },
 ];
 
 export default function Sidebar() {
