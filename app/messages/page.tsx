@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Download, Code2, MoreHorizontal, MessageSquare, ArrowUpDown } from "lucide-react";
+import { Search, Download, Code2, MoreHorizontal, MessageSquare, ArrowUpDown, User, Clock, CheckCircle, Send } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 import { Tooltip } from "@/components/Tooltip";
 import { useToast } from "@/components/Toast";
+import { SlideOver } from "@/components/SlideOver";
 
 type Tab = "all" | "whatsapp" | "sms" | "delivered";
 type SortField = "to" | "platform" | "status" | "sent";
@@ -39,6 +40,7 @@ export default function MessagesPage() {
   const [sortField, setSortField] = useState<SortField>("sent");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const itemsPerPage = 5;
   const { showToast } = useToast();
 
@@ -166,7 +168,7 @@ export default function MessagesPage() {
                 </td>
               </tr>
             ) : paginated.map((msg, i) => (
-              <tr key={i} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+              <tr key={i} onClick={() => setSelectedMessage(msg)} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${msg.platform === "whatsapp" ? "bg-green-100 dark:bg-green-900/30" : "bg-blue-100 dark:bg-blue-900/30"}`}>
@@ -205,6 +207,85 @@ export default function MessagesPage() {
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} itemsPerPage={itemsPerPage} totalItems={filteredAndSorted.length} />
         )}
       </div>
+
+      {/* Message Detail Slide-Over */}
+      <SlideOver isOpen={!!selectedMessage} onClose={() => setSelectedMessage(null)} title="Message Details">
+        {selectedMessage && (
+          <div className="p-6 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${selectedMessage.platform === "whatsapp" ? "bg-green-100 dark:bg-green-900/30" : "bg-blue-100 dark:bg-blue-900/30"}`}>
+                <MessageSquare className={`w-7 h-7 ${selectedMessage.platform === "whatsapp" ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"}`} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{selectedMessage.to}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{selectedMessage.platform === "whatsapp" ? "WhatsApp" : "SMS"} • {selectedMessage.sent}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className={`inline-flex px-3 py-1.5 text-sm font-medium rounded-lg ${
+                selectedMessage.status === "read" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" :
+                selectedMessage.status === "delivered" ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" :
+                selectedMessage.status === "sent" ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400" :
+                "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+              }`}>{selectedMessage.statusLabel}</span>
+            </div>
+
+            {/* Message Content */}
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Message Content</p>
+              <div className={`rounded-lg p-4 ${selectedMessage.platform === "whatsapp" ? "bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800" : "bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800"}`}>
+                <p className="text-sm text-gray-800 dark:text-gray-200">{selectedMessage.content}</p>
+              </div>
+            </div>
+
+            {/* Delivery Timeline */}
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">Delivery Timeline</p>
+              <div className="space-y-3">
+                {[
+                  { label: "Sent", time: selectedMessage.sent, done: true },
+                  { label: "Delivered", time: selectedMessage.status !== "sent" ? "2 seconds later" : null, done: selectedMessage.status !== "sent" && selectedMessage.status !== "failed" },
+                  { label: "Read", time: selectedMessage.status === "read" ? "5 minutes later" : null, done: selectedMessage.status === "read" },
+                ].map((step, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${step.done ? "bg-green-100 dark:bg-green-900/30" : "bg-gray-100 dark:bg-gray-700"}`}>
+                      {step.done ? <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" /> : <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-500" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-sm ${step.done ? "text-gray-900 dark:text-white font-medium" : "text-gray-400 dark:text-gray-500"}`}>{step.label}</p>
+                    </div>
+                    {step.time && <span className="text-xs text-gray-500 dark:text-gray-400">{step.time}</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Campaign</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Vana Peru B0-30</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Template</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Payment Reminder v2</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button onClick={() => { showToast("info", "Resending message..."); setSelectedMessage(null); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+                <Send className="w-4 h-4" /> Resend
+              </button>
+              <button onClick={() => { showToast("success", "Viewing contact profile"); setSelectedMessage(null); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
+                <User className="w-4 h-4" /> View Contact
+              </button>
+            </div>
+          </div>
+        )}
+      </SlideOver>
     </div>
   );
 }

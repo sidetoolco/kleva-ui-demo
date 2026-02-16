@@ -15,6 +15,7 @@ export default {
       },
       animation: {
         "slide-in": "slide-in 0.3s ease-out",
+        "slide-in-right": "slide-in-right 0.3s ease-out",
         "fade-in": "fade-in 0.3s ease-in",
         "count-up": "count-up 0.5s ease-out",
         "spin-slow": "spin 3s linear infinite",
@@ -24,6 +25,10 @@ export default {
         "slide-in": {
           from: { transform: "translateX(100%)", opacity: "0" },
           to: { transform: "translateX(0)", opacity: "1" },
+        },
+        "slide-in-right": {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
         },
         "fade-in": {
           from: { opacity: "0" },

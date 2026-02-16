@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, Download, Code2, MoreHorizontal, Headphones, ArrowUpDown } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { Search, Download, Code2, MoreHorizontal, Headphones, ArrowUpDown, Phone, Clock, User, FileText, Play } from "lucide-react";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { Pagination } from "@/components/Pagination";
 import { Tooltip } from "@/components/Tooltip";
 import { useToast } from "@/components/Toast";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
 import { ActivityFeed } from "@/components/ActivityFeed";
+import { SlideOver } from "@/components/SlideOver";
 
 type Tab = "all" | "answered" | "promises" | "no-answer";
 type SortField = "to" | "status" | "sent";
@@ -123,6 +124,7 @@ export default function CallsPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const itemsPerPage = 5;
   const { showToast } = useToast();
 
@@ -356,7 +358,8 @@ export default function CallsPage() {
               paginatedCalls.map((call, index) => (
                 <tr
                   key={index}
-                  className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  onClick={() => setSelectedCall(call)}
+                  className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -422,6 +425,122 @@ export default function CallsPage() {
       <div className="mt-6">
         <ActivityFeed />
       </div>
+
+      {/* Call Detail Slide-Over */}
+      <SlideOver isOpen={!!selectedCall} onClose={() => setSelectedCall(null)} title="Call Details">
+        {selectedCall && (
+          <div className="p-6 space-y-6">
+            {/* Contact Info */}
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <User className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{selectedCall.to}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{selectedCall.sent}</p>
+              </div>
+            </div>
+
+            {/* Status Badge */}
+            <div className="flex items-center gap-3">
+              <span className={`inline-flex px-3 py-1.5 text-sm font-medium rounded-lg ${
+                selectedCall.status === "promise" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" :
+                selectedCall.status === "answered" ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" :
+                selectedCall.status === "voicemail" ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400" :
+                "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+              }`}>{selectedCall.statusLabel}</span>
+              {selectedCall.hasRecording && (
+                <span className="text-xs text-gray-500 dark:text-gray-400">• Recording available</span>
+              )}
+            </div>
+
+            {/* Subject */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Subject</p>
+              <p className="text-sm text-gray-900 dark:text-white">{selectedCall.subject}</p>
+            </div>
+
+            {/* Recording Player */}
+            {selectedCall.hasRecording && (
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Call Recording</p>
+                <AudioPlayer duration={selectedCall.status === "promise" ? "1:45" : "1:22"} compact={false} />
+              </div>
+            )}
+
+            {/* Call Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <Phone className="w-3.5 h-3.5 text-gray-400" />
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Direction</p>
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Outbound</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock className="w-3.5 h-3.5 text-gray-400" />
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Duration</p>
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {selectedCall.status === "promise" ? "1:45" : selectedCall.status === "answered" ? "1:22" : "0:12"}
+                </p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <User className="w-3.5 h-3.5 text-gray-400" />
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Agent</p>
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Maria - Mexico</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <FileText className="w-3.5 h-3.5 text-gray-400" />
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Campaign</p>
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Vana Peru B0-30</p>
+              </div>
+            </div>
+
+            {/* AI Transcript */}
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">AI Transcript Summary</p>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-3">
+                <div className="flex gap-3">
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400 flex-shrink-0">Agent:</span>
+                  <p className="text-xs text-gray-700 dark:text-gray-300">Buenos días, hablo con {selectedCall.to}? Le llamo de parte del banco respecto a su cuenta.</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-xs font-medium text-green-600 dark:text-green-400 flex-shrink-0">Contact:</span>
+                  <p className="text-xs text-gray-700 dark:text-gray-300">Sí, soy yo. ¿De qué se trata?</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400 flex-shrink-0">Agent:</span>
+                  <p className="text-xs text-gray-700 dark:text-gray-300">Tenemos un saldo pendiente en su cuenta. ¿Podemos revisar opciones de pago?</p>
+                </div>
+                {selectedCall.status === "promise" && (
+                  <div className="flex gap-3">
+                    <span className="text-xs font-medium text-green-600 dark:text-green-400 flex-shrink-0">Contact:</span>
+                    <p className="text-xs text-gray-700 dark:text-gray-300">Sí, puedo hacer el pago este viernes sin falta.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-2">
+              <button onClick={() => { showToast("info", "Scheduling follow-up..."); setSelectedCall(null); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                Schedule Follow-up
+              </button>
+              <button onClick={() => { showToast("success", "Added note to contact"); setSelectedCall(null); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
+                Add Note
+              </button>
+            </div>
+          </div>
+        )}
+      </SlideOver>
     </div>
   );
 }

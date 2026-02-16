@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Download, Code2, MoreHorizontal, Mail, ArrowUpDown } from "lucide-react";
+import { Search, Download, Code2, MoreHorizontal, Mail, ArrowUpDown, User, CheckCircle, Send, ExternalLink, MousePointer } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 import { Tooltip } from "@/components/Tooltip";
 import { useToast } from "@/components/Toast";
+import { SlideOver } from "@/components/SlideOver";
 
 type Tab = "all" | "sent" | "opened" | "clicked";
 type SortField = "to" | "status" | "subject" | "sent";
@@ -38,6 +39,7 @@ export default function EmailsPage() {
   const [sortField, setSortField] = useState<SortField>("sent");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const itemsPerPage = 5;
   const { showToast } = useToast();
 
@@ -161,7 +163,7 @@ export default function EmailsPage() {
                 </td>
               </tr>
             ) : paginated.map((email, i) => (
-              <tr key={i} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+              <tr key={i} onClick={() => setSelectedEmail(email)} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -198,6 +200,100 @@ export default function EmailsPage() {
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} itemsPerPage={itemsPerPage} totalItems={filteredAndSorted.length} />
         )}
       </div>
+
+      {/* Email Detail Slide-Over */}
+      <SlideOver isOpen={!!selectedEmail} onClose={() => setSelectedEmail(null)} title="Email Details">
+        {selectedEmail && (
+          <div className="p-6 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <Mail className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{selectedEmail.to}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{selectedEmail.sent}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className={`inline-flex px-3 py-1.5 text-sm font-medium rounded-lg ${
+                selectedEmail.status === "clicked" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" :
+                selectedEmail.status === "opened" ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" :
+                selectedEmail.status === "delivered" ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400" :
+                selectedEmail.status === "sent" ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400" :
+                "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+              }`}>{selectedEmail.statusLabel}</span>
+            </div>
+
+            {/* Subject */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Subject</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedEmail.subject}</p>
+            </div>
+
+            {/* Email Preview */}
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Email Preview</p>
+              <div className="bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-5 space-y-3">
+                <div className="flex items-center gap-2 pb-3 border-b border-gray-100 dark:border-gray-600">
+                  <div className="w-8 h-8 bg-gray-900 dark:bg-gray-100 rounded-lg flex items-center justify-center text-white dark:text-gray-900 text-xs font-bold">K</div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">Kleva Collections</span>
+                </div>
+                <p className="text-sm text-gray-700 dark:text-gray-300">Estimado cliente,</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">Le contactamos respecto a su cuenta. Hemos preparado opciones de pago flexibles para resolver su saldo pendiente.</p>
+                <div className="pt-2">
+                  <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg">Ver opciones de pago →</button>
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-500 pt-2">Este correo fue enviado por Kleva en nombre de su institución financiera.</p>
+              </div>
+            </div>
+
+            {/* Delivery Timeline */}
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">Event Timeline</p>
+              <div className="space-y-3">
+                {[
+                  { label: "Sent", icon: Send, done: true, time: selectedEmail.sent },
+                  { label: "Delivered", icon: CheckCircle, done: selectedEmail.status !== "bounced", time: selectedEmail.status !== "bounced" ? "instant" : null },
+                  { label: "Opened", icon: ExternalLink, done: selectedEmail.status === "opened" || selectedEmail.status === "clicked", time: (selectedEmail.status === "opened" || selectedEmail.status === "clicked") ? "12 min later" : null },
+                  { label: "Link Clicked", icon: MousePointer, done: selectedEmail.status === "clicked", time: selectedEmail.status === "clicked" ? "14 min later" : null },
+                ].map((step, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${step.done ? "bg-green-100 dark:bg-green-900/30" : "bg-gray-100 dark:bg-gray-700"}`}>
+                      {step.done ? <step.icon className="w-3.5 h-3.5 text-green-600 dark:text-green-400" /> : <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-500" />}
+                    </div>
+                    <p className={`text-sm flex-1 ${step.done ? "text-gray-900 dark:text-white font-medium" : "text-gray-400 dark:text-gray-500"}`}>{step.label}</p>
+                    {step.time && <span className="text-xs text-gray-500 dark:text-gray-400">{step.time}</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Campaign</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Vana Peru B0-30</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Template</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Payment Options v3</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button onClick={() => { showToast("info", "Resending email..."); setSelectedEmail(null); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+                <Send className="w-4 h-4" /> Resend
+              </button>
+              <button onClick={() => { showToast("success", "Viewing contact profile"); setSelectedEmail(null); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
+                <User className="w-4 h-4" /> View Contact
+              </button>
+            </div>
+          </div>
+        )}
+      </SlideOver>
     </div>
   );
 }
